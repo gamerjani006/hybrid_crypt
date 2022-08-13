@@ -1,4 +1,3 @@
-import base64
 import os
 
 
@@ -82,6 +81,8 @@ def pad(chunk):
 
 
 def encrypt(text, key, iv):
+    assert len(key) % 16 == 0, "Invalid key length"
+    assert len(iv) % 16 == 0, "Invalid iv length"
     text = pad(text)
     text = turn_into_chunks(text)
     key = [i for i in key]
@@ -103,6 +104,8 @@ def encrypt(text, key, iv):
 
 
 def decrypt(text, key, iv):
+    assert len(key) % 16 == 0, "Invalid key length"
+    assert len(iv) % 16 == 0, "Invalid iv length"
     text = turn_into_chunks(text)
     key = [i for i in key]
     final = []
@@ -122,15 +125,15 @@ def decrypt(text, key, iv):
     return bytes(pad_removed)
 
 
-def generate_bits(bits=16):
-    return os.urandom(bits)
+def generate_bytes(bytecount=16):
+    return os.urandom(bytecount)
 
-
-text = b"Lorem ipsum dolor sit amet aliqu"
-key = b"16byte secretkey"
-iv = b"get 16 byte rand"
-encrypted = encrypt(text, key, iv) #Returns bytes 
-decrypted = decrypt(encrypted, key, iv) #Returns bytes
-print(f"Encrypting {text}\nUsing key {key}\nUsing iv  {iv}\n")
-print("Encrypted:", base64.b64encode(encrypted).decode())
-print("Decrypted:", decrypted.decode())
+if __name__ == "__main__":
+    text = input("Input text: ").encode()
+    key = input("Input key: ").encode()
+    iv = input("Input iv: ").encode()
+    encrypted = encrypt(text, key, iv) #Returns bytes 
+    decrypted = decrypt(encrypted, key, iv) #Returns bytes
+    print(f"Encrypting {text}\nUsing key {key}\nUsing iv  {iv}\n")
+    print("Encrypted:", encrypted)
+    print("Decrypted:", decrypted.decode())
